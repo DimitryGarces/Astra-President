@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Layout</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: row;
+            min-height: 100vh;
+            background-color: #f4f4f4;
+        }
+
+        .sidebar {
+            background-color: #333333;
+            color: #fff;
+            width: 26vw;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .sidebar rssapp-list {
+            color: #fff;
+            text-decoration: none;
+            padding: 10px;
+            border-radius: 4px;
+            transition: background 0.3s ease;
+        }
+
+        .sidebar rssapp-list:hover {
+            background-color: #555;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-areas:
+                "welcome welcome welcome"
+                "summary summary chart6"
+                "chart2 chart3 chart1"
+                "chart4 chart5 chart5";
+            grid-template-columns: repeat(3, 1fr);
+            grid-auto-rows: min-content;
+            gap: 20px;
+            width: 100%;
+            padding: 20px;
+        }
+
+        .welcome {
+            grid-area: welcome;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 10px;
+            font-size: 1.8rem;
+            font-weight: bold;
+            height: min-content;
+            max-height: 150px;
+        }
+
+        .welcome .options {
+            position: relative;
+        }
+
+        .welcome .options img {
+            width: 70%;
+            height: auto;
+            max-width: 100px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .welcome .dropdown {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            display: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .welcome .dropdown a {
+            display: block;
+            padding: 10px;
+            text-decoration: none;
+            color: #333;
+            border-bottom: 1px solid #eee;
+        }
+
+        .welcome .dropdown a:last-child {
+            border-bottom: none;
+        }
+
+        .welcome .dropdown a:hover {
+            background-color: #f4f4f4;
+        }
+
+        .summary {
+            grid-area: summary;
+            background-color: #ffffff;
+            padding: 0px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: left;
+            align-items: left;
+            max-height: min-content;
+            height: 40vh !important;
+            border: 1px solid rgb(216, 216, 216);
+        }
+
+        .chart {
+            background-color: #ffffff;
+            padding: 0px;
+            border-radius: 8px;
+            min-height: 37vh;
+            border: 1px solid rgb(216, 216, 216);
+        }
+
+        .chart1 {
+            grid-area: chart1;
+        }
+
+        .chart2 {
+            grid-area: chart2;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .chart3 {
+            grid-area: chart3;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .chart4 {
+            grid-area: chart4;
+        }
+
+        .chart5 {
+            grid-area: chart5;
+        }
+
+        .chart6 {
+            grid-area: chart6;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                flex-direction: row;
+                overflow-x: auto;
+                white-space: nowrap;
+                min-height: auto;
+            }
+
+            .sidebar a {
+                display: inline-block;
+                text-align: center;
+                padding: 10px;
+            }
+
+            .dashboard {
+                grid-template-areas:
+                    "welcome"
+                    "summary"
+                    "chart2"
+                    "chart3"
+                    "chart1"
+                    "chart4"
+                    "chart5";
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .contenedor {
+            width: 100%;
+            height: auto;
+            max-height: min-content;
+            position: relative;
+            max-width: 500px;
+            margin: auto;
+            background-color: #333333;
+            padding: 0%;
+        }
+
+        .widget {
+            width: 100%;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            margin: auto;
+        }
+
+        .widget p {
+            display: inline-block;
+            line-height: 1em;
+        }
+
+        .fecha {
+            font-family: arial;
+            text-align: center;
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+            background-color: #333333;
+            padding: 4px;
+            width: 100%;
+        }
+
+        .reloj {
+            font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+            width: 100%;
+            font-size: 2.7rem;
+            text-align: center;
+            background-color: #333333;
+        }
+
+        .reloj .cajaSegundos {
+            display: inline-block;
+        }
+
+        .reloj .ampm,
+        .reloj .segundos {
+            display: block;
+            font-size: 1rem;
+        }
+
+        #graficaBarras,
+        #graficaDona {
+            width: 90%;
+            height: 100%;
+        }
+
+        #graficaDona {
+            height: 100% !important;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="contenedor">
+            <div class="widget">
+                <div class="fecha">
+                    <p id="diaSemana" class="diaSemana"></p>
+                    <p id="dia" class="dia"></p>
+                    <p>de</p>
+                    <p id="mes" class="mes"></p>
+                    <p>del</p>
+                    <p id="anio" class="anio"></p>
+                </div>
+                <div class="reloj">
+                    <p id="horas" class="horas"></p>
+                    <p>:</p>
+                    <p id="minutos" class="minutos"></p>
+                    <p>:</p>
+                    <div class="cajaSegundos">
+                        <p id="ampm" class="ampm"></p>
+                        <p id="segundos" class="segundos"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="contenedor">
+
+        </div>
+        <rssapp-list id="UC94Z31EArrGZO3Y"></rssapp-list>
+        <rssapp-list id="ee07YgcJWVVQ5Npp"></rssapp-list>
+        <!--<a href="#">Home</a>
+        <a href="#">Dashboard</a>
+        <a href="#">Reports</a>
+        <a href="#">Settings</a>
+        <a href="#">Logout</a>-->
+    </div>
+    <div class="dashboard">
+        <div class="welcome">
+            Bienvenid@ alcalde $nombre
+            <div class="options">
+                <img src="" alt="Profile Image" id="profileImage">
+                <div class="dropdown" id="dropdownMenu">
+                    <label for="uploadImage"
+                        style="cursor: pointer; display: block; padding: 10px; color: #333;">Cambiar imagen</label>
+                    <a href="#">Cerrar sesión</a>
+                </div>
+                <input type="file" id="uploadImage" style="display: none;" accept=".png">
+            </div>
+        </div>
+        <div class="summary">
+            <div id="graficaBarras"></div>
+        </div>
+        <div class="chart chart2">
+            <div id="graficaDona"></div>
+        </div>
+        <div class="chart chart3">Best Zone</div>
+        <div class="chart chart1">Less</div>
+        <div class="chart chart4">Gabinetes en ingles xd</div>
+        <div class="chart chart5" style="background-color: #005393e0;">Más Gabinetes en ingles:V</div>
+    </div>
+    <script>
+        document.getElementById('profileImage').addEventListener('click', () => {
+            const dropdown = document.getElementById('dropdownMenu');
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+            setTimeout(() => {
+                dropdown.style.display = 'none';
+            }, 3000);
+        });
+
+        document.getElementById('uploadImage').addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const formData = new FormData();
+                formData.append('profileImage', file);
+
+                fetch('../Back-End/uploadProfileImage.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire('Éxito', 'Imagen subida exitosamente', 'success');
+                            document.getElementById('profileImage').src = `../Perfiles/${data.filename}`;
+                        } else {
+                            Swal.fire('Error', data.error, 'error');
+                        }
+                    })
+                    .catch(() => Swal.fire('Error', 'Error en la conexión al servidor', data.error));
+            } else {
+                Swal.fire('Advertencia', 'Por favor selecciona un archivo PNG', 'warning');
+            }
+        });
+        fetch(`../Back-End/uploadProfileImage.php?ayuntamiento=tianguistenco`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('profileImage').src = `../Perfiles/${data.imagen}`;
+                } else {
+                    document.getElementById('profileImage').src = '../Perfiles/default.png';
+                }
+            });
+        $(function () {
+            var actualizarHora = function () {
+                var fecha = new Date(),
+                    hora = fecha.getHours(),
+                    minutos = fecha.getMinutes(),
+                    segundos = fecha.getSeconds(),
+                    diaSemana = fecha.getDay(),
+                    dia = fecha.getDate(),
+                    mes = fecha.getMonth(),
+                    anio = fecha.getFullYear(),
+                    ampm;
+
+                var $pHoras = $("#horas"),
+                    $pSegundos = $("#segundos"),
+                    $pMinutos = $("#minutos"),
+                    $pAMPM = $("#ampm"),
+                    $pDiaSemana = $("#diaSemana"),
+                    $pDia = $("#dia"),
+                    $pMes = $("#mes"),
+                    $pAnio = $("#anio");
+                var semana = ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'];
+                var meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+
+                $pDiaSemana.text(semana[diaSemana]);
+                $pDia.text(dia);
+                $pMes.text(meses[mes]);
+                $pAnio.text(anio);
+                if (hora >= 12) {
+                    hora = hora - 12;
+                    ampm = "PM";
+                } else {
+                    ampm = "AM";
+                }
+                if (hora == 0) {
+                    hora = 12;
+                }
+                if (hora < 10) { $pHoras.text("0" + hora) } else { $pHoras.text(hora) };
+                if (minutos < 10) { $pMinutos.text("0" + minutos) } else { $pMinutos.text(minutos) };
+                if (segundos < 10) { $pSegundos.text("0" + segundos) } else { $pSegundos.text(segundos) };
+                $pAMPM.text(ampm);
+
+            };
+
+
+            actualizarHora();
+            var intervalo = setInterval(actualizarHora, 1000);
+        });
+
+        var xValues = ["Resueltos", "Pendientes"];
+        var xDireciones = ["Obras Públicas",
+            "Tesoreria",
+            "Administracion",
+            "Consejería Juridica",
+            "Gobernacion",
+            "Desarrollo Economico Turistico y Artesanal"];
+
+        var yValues = [100, 25];
+        var yDirecciones = [15, 5, 4, 2, 10, 7];
+        var barColors = ["#005493",
+            "#00477A",
+            "#006BAE ",
+            "#FF2600 ",
+            "#CC2100 ",
+            "#FF5733 "];
+        google.charts.load('current', { packages: ['corechart'] });
+        google.charts.setOnLoadCallback(drawChart);
+        function drawChart() {
+            const data = google.visualization.arrayToDataTable([
+                ['Cantidad', '', ''],
+                ['Resueltos', yValues[0], null],
+                ['Pendientes', null, yValues[1]],
+            ]);
+
+            const options = {
+                title: 'Asuntos Generales',
+                colors: ['#005493', '#FF2600'],
+                isStacked: true,
+            };
+
+            const chart = new google.visualization.BarChart(document.getElementById('graficaBarras'));
+            chart.draw(data, options);
+        }
+
+        function drawDonutChart() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Dirección');
+            data.addColumn('number', 'Cantidad');
+            for (var i = 0; i < xDireciones.length; i++) {
+                data.addRow([xDireciones[i], yDirecciones[i]]);
+            }
+
+            var options = {
+                title: 'Aporte de Mejores y Peores Direcciones',
+                colors: ["#005493",
+                    "#00477A",
+                    "#006BAE",
+                    "#FF2600",
+                    "#CC2100",
+                    "#FF5733"],
+                chartArea: {
+                    width: '90%',
+                    height: '80%'
+                },
+                legend: { position: 'bottom' }
+                //pieHole: 0.4, // Ajusta el tamaño del agujero del donut
+            };
+
+            var chart = new google.visualization.PieChart(document.getElementById('graficaDona'));
+            chart.draw(data, options);
+        }
+        google.charts.setOnLoadCallback(drawDonutChart);
+        function redibujarGraficas() {
+            drawChart();
+            drawDonutChart();
+        }
+        window.addEventListener('resize', redibujarGraficas);
+    </script>
+    <script src="https://widget.rss.app/v1/list.js" type="text/javascript" async></script>
+</body>
+
+</html>
