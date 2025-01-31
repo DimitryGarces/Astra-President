@@ -1,19 +1,37 @@
-// request.js
 document.addEventListener("DOMContentLoaded", function () {
     // Obtenemos los parámetros de la URL actual
     const params = new URLSearchParams(window.location.search);
-    const device = params.get("device");
-    const tag = params.get("tag");
-    fetch(`../Back-End/consulta.php?device=${device}&tag=${tag}`)
+    const device = params.get('device');  // Extraer device
+    const tag = params.get('tag');  // Extraer tag
+
+    // Verificar que los valores no sean null o undefined
+    if (!device || !tag) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Acceso denegado',
+            text: 'Faltan parámetros en la URL.',
+            timer: 2000
+        });
+        return;
+    }
+
+    let body = new FormData();
+    body.append('device', device);
+    body.append('tag', tag);
+
+    fetch(`../Back-End/consulta.php`, {
+        method: 'POST',
+        body: body
+    })
         .then((response) => response.json())
         .then((data) => {
-            let socket;
             if (data.success) {
-                socket = io(data.message);
+                let socket = io('https://serverws-gwch.onrender.com');
 
-                socket.emit('registerDevice', { device, tag });
+                // Enviar los datos al servidor WebSocket
+                socket.emit('registerDevice', { device: device, tag: tag });
 
-                socket.on('accesoConcedido', (data) => {
+                socket.on('accesoConcedido', () => {
                     Swal.fire({
                         icon: 'success',
                         title: 'Acceso concedido',
@@ -22,7 +40,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     });
                     window.close();
                 });
-                socket.on('accesoDenegado', (data) => {
+
+                socket.on('accesoDenegado', () => {
                     Swal.fire({
                         icon: 'error',
                         title: 'Acceso denegado',
@@ -30,6 +49,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         timer: 2000
                     });
                 });
+
             } else {
                 Swal.fire({
                     icon: 'error',
@@ -42,9 +62,10 @@ document.addEventListener("DOMContentLoaded", function () {
         .catch((error) => {
             Swal.fire({
                 icon: 'error',
-                title: 'Acceso denegado',
-                text: error,
+                title: 'Error de conexión',
+                text: 'No se pudo conectar con el servidor.',
                 timer: 2000
             });
+            console.error("Error en la solicitud:", error);
         });
 });

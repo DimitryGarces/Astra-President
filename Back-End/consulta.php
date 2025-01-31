@@ -25,12 +25,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             // Guardar los datos en la sesión
             $_SESSION['usuario'] = [
-                'device' => $userData['device'],
-                'tag'    => $userData['tag'],
+                'device' => $device,
+                'tag'    => $tag,
                 'nombre' => $userData['nombre'] ?? 'Usuario'
             ];
 
-            echo json_encode(['success' => true, 'message' => 'https://serverws-gwch.onrender.com']);
+            echo json_encode(['success' => true, 'message' => 'Correcto']);
         } else {
             echo json_encode(['success' => false, 'message' => 'Credenciales incorrectas']);
         }
