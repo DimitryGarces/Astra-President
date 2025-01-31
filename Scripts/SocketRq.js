@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", function () {
     fetch(`../Back-End/consulta.php?device=${device}&tag=${tag}`)
         .then((response) => response.json())
         .then((data) => {
+            let socket;
             if (data.success) {
                 socket = io(data.message);
 

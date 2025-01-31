@@ -2,6 +2,7 @@
 document.addEventListener("DOMContentLoaded", function () {
     const device = 'l34t0r1z4d0r53cr3t0';
     const tag = '73929203';
+    let socket;
 
     socket = io('https://serverws-gwch.onrender.com');
     socket.emit('registerDevice', { device, tag });
