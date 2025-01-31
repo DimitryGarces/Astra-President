@@ -404,8 +404,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                            <td>Educación</td>
-                            <td>0%</td>
+                        <td>Educación</td>
+                        <td>0%</td>
                         </tr>
                         <tr>
                             <td>Salud</td>
@@ -604,7 +604,20 @@
             drawLineGraph();
         }
         window.addEventListener('resize', redibujarGraficas);
+
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch('../Back-End/session_check.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.success) {
+                        window.location.href = "../Login/";
+                    }
+                })
+                .catch(error => console.error("Error verificando sesión"));
+        });
+
     </script>
+    <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"></script>
     <script src="https://widget.rss.app/v1/list.js" type="text/javascript" async></script>
 </body>
 
