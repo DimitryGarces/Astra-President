@@ -83,7 +83,9 @@
 
         .welcome .dropdown {
             position: absolute;
-            top: 50px;
+            font-size: 1rem;
+            width: 15vw;
+            top: 70px;
             right: 0;
             background-color: #fff;
             border: 1px solid #ccc;
@@ -125,7 +127,7 @@
             background-color: #ffffff;
             padding: 0px;
             border-radius: 8px;
-            min-height: 37vh;
+            min-height: 38vh;
             border: 1px solid rgb(216, 216, 216);
         }
 
@@ -254,6 +256,56 @@
         #graficaDona {
             height: 100% !important;
         }
+
+        /* Estilos generales para la tabla de mejores rendimientos */
+        .table-container {
+            width: 100%;
+            max-width: 500px;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        /* Estilos generales de la tabla */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: 'Arial', sans-serif;
+            font-size: 16px;
+            background: #fff;
+        }
+
+        th,
+        td {
+            padding: 12px 15px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        th {
+            background: #f4f4f4;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-bottom: 2px solid #ddd;
+        }
+
+        td {
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        /* Estilos específicos para mejores rendimientos */
+
+        .mejor-rendimiento th {
+            background: #848484;
+            color: white;
+        }
+
+        .mejor-rendimiento tbody tr:hover {
+            background: rgba(127, 127, 127, 0.1);
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
@@ -284,8 +336,8 @@
                 </div>
             </div>
         </div>
-        <div class="contenedor">
-
+        <div class="contenedor" style="display: flex; justify-content: center; align-items: center;">
+            <img src="../Img/hermesWhite.jpg" alt="Hermes" style="max-width: 90%;">
         </div>
         <rssapp-list id="UC94Z31EArrGZO3Y"></rssapp-list>
         <rssapp-list id="ee07YgcJWVVQ5Npp"></rssapp-list>
@@ -297,13 +349,13 @@
     </div>
     <div class="dashboard">
         <div class="welcome">
-            Bienvenid@ alcalde $nombre
+            Bienvenida Alcaldesa Municipal, Erika O.T.
             <div class="options">
                 <img src="" alt="Profile Image" id="profileImage">
                 <div class="dropdown" id="dropdownMenu">
                     <label for="uploadImage"
                         style="cursor: pointer; display: block; padding: 10px; color: #333;">Cambiar imagen</label>
-                    <a href="#">Cerrar sesión</a>
+                    <a href="../Login/">Cerrar sesión</a>
                 </div>
                 <input type="file" id="uploadImage" style="display: none;" accept=".png">
             </div>
@@ -314,10 +366,66 @@
         <div class="chart chart2">
             <div id="graficaDona"></div>
         </div>
-        <div class="chart chart3">Best Zone</div>
-        <div class="chart chart1">Less</div>
-        <div class="chart chart4">Gabinetes en ingles xd</div>
-        <div class="chart chart5" style="background-color: #005393e0;">Más Gabinetes en ingles:V</div>
+        <div class="chart chart3" style="text-align: center; vertical-align: middle;">
+            <h3 style="padding-top: 4%;">Mejores Rendimientos</h3>
+            <div class="table-container">
+                <table class="mejor-rendimiento">
+                    <thead>
+                        <tr>
+                            <th>Dirección</th>
+                            <th>Rendimiento</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Obras Públicas</td>
+                            <td>0%</td>
+                        </tr>
+                        <tr>
+                            <td>Tesorería</td>
+                            <td>0%</td>
+                        </tr>
+                        <tr>
+                            <td>Administración</td>
+                            <td>0%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="chart chart1" style="text-align: center; vertical-align: middle;">
+            <h3 style="padding-top: 4%;">Peores Rendimientos</h3>
+            <div class="table-container">
+                <table class="mejor-rendimiento">
+                    <thead>
+                        <tr>
+                            <th>Dirección</th>
+                            <th>Rendimiento</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                            <td>Educación</td>
+                            <td>0%</td>
+                        </tr>
+                        <tr>
+                            <td>Salud</td>
+                            <td>0%</td>
+                        </tr>
+                        <tr>
+                            <td>Seguridad Pública</td>
+                            <td>0%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="chart chart4" style="text-align: center; vertical-align: middle;">
+            Avance Mensual
+            <div id="graficaLinea"></div>
+        </div>
+        <div class="chart chart5" style="text-align: center; vertical-align: middle;">
+            Gabinetes
+        </div>
     </div>
     <script>
         document.getElementById('profileImage').addEventListener('click', () => {
@@ -417,8 +525,8 @@
             "Gobernacion",
             "Desarrollo Economico Turistico y Artesanal"];
 
-        var yValues = [100, 25];
-        var yDirecciones = [15, 5, 4, 2, 10, 7];
+        var yValues = [0, 0];
+        var yDirecciones = [0, 0, 0, 0, 0, 0];
         var barColors = ["#005493",
             "#00477A",
             "#006BAE ",
@@ -426,6 +534,7 @@
             "#CC2100 ",
             "#FF5733 "];
         google.charts.load('current', { packages: ['corechart'] });
+        google.charts.load('current', { packages: ['table'] });
         google.charts.setOnLoadCallback(drawChart);
         function drawChart() {
             const data = google.visualization.arrayToDataTable([
@@ -471,10 +580,28 @@
             var chart = new google.visualization.PieChart(document.getElementById('graficaDona'));
             chart.draw(data, options);
         }
-        google.charts.setOnLoadCallback(drawDonutChart);
+        function drawLineGraph() {
+            var data = google.visualization.arrayToDataTable([
+                ['Mes', 'Asuntos'],
+                ['Enero', 0],
+                ['Febrero', 0],
+                ['Marzo', 0],
+                ['Abril', 0]
+            ]);
+            var options = {
+                title: 'Avance Mensual',
+                curveType: 'function',
+                legend: { position: 'bottom' }
+            };
+
+            var chart = new google.visualization.LineChart(document.getElementById('graficaLinea'));
+            chart.draw(data, options);
+        }
+        //google.charts.setOnLoadCallback(drawDonutChart);
         function redibujarGraficas() {
             drawChart();
             drawDonutChart();
+            drawLineGraph();
         }
         window.addEventListener('resize', redibujarGraficas);
     </script>
