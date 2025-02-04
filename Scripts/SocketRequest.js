@@ -18,48 +18,29 @@ document.addEventListener("DOMContentLoaded", function () {
     // Conectarse al servidor de WebSockets
     const socket = io('https://serverws-gwch.onrender.com');  // Reemplaza con tu URL/endpoint
 
-    // Al conectarnos, nos unimos a la sala y emitimos el registro
     socket.on('connect', () => {
-        console.log('Conectado al servidor de WebSocket');
-
-        // Unir este socket a la sala del device
-        socket.emit('unirmeAlDevice', { device });
-
-        // Emitir evento para registrar el dispositivo
-        socket.emit('registerDevice', { device, tag });
-    });
-
-    // Escuchar si el servidor notifica nuevo registro para este device
-    socket.on('nuevoRegistroEnDevice', (data) => {
-        // Si tu servidor emite 'nuevoRegistroEnDevice'
-        Swal.fire({
-            icon: 'success',
-            title: 'Registro Exitoso',
-            text: 'Tu dispositivo ha sido autenticado correctamente.',
-            timer: 2000
-        });
-        // Cerrar la ventana o redirigir
-        window.close();
-    });
-
-    // Si tu servidor emite 'registroExitoso' (depende de tu lógica)
-    socket.on('registroExitoso', (data) => {
-        Swal.fire({
-            icon: 'success',
-            title: 'Registro Exitoso',
-            text: data.message || 'Tu dispositivo se registró correctamente.',
-            timer: 2000
-        });
-        // Cerrar la ventana o redirigir
-        window.close();
+        socket.emit('checkDevice', { device, tag });
     });
 
     // Escuchar acceso denegado
-    socket.on('accesoDenegado', (data) => {
+    socket.on('accessGranted', (data) => {
+        console.log('Acceso correcto recibido:', data.message);
+        Swal.fire({
+            icon: 'success',
+            title: 'Acceso Autorizado',
+            text: data.message,
+            timer: 2000,
+            willClose: () => {
+                window.close();
+              }
+        });
+    });
+
+    socket.on('accessLocked', (data) => {
         Swal.fire({
             icon: 'error',
-            title: 'Acceso denegado',
-            text: data.mensaje || 'Alerta: La suplantación de identidad es un delito.',
+            title: 'Dispositivo Bloqueado',
+            text: data.message,
             timer: 3000
         });
     });
